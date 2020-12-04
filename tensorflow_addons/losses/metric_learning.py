@@ -16,6 +16,38 @@
 
 import tensorflow as tf
 from tensorflow_addons.utils.types import TensorLike
+from typing import Union, Callable
+
+@tf.function
+def calculate_distance_matrix(feature: TensorLike, distance_metric: Union[str, Callable]):
+    """Computes the distance matrix. 
+    
+    Args:
+      feature: 2-D Tensor of size `[number of data, feature dimension]`.
+      distance_metric: `str` or a `Callable` that determines distance metric.
+        Valid strings are "L2" for l2-norm distance,
+        "squared-L2" for squared l2-norm distance,
+        and "angular" for cosine similarity.
+
+        A `Callable` should take a batch of embeddings as input and
+        return the pairwise distance matrix.
+    
+    Returns:
+      distances: 2-D Tensor of size `[number of data, number of data]`
+    """
+    if distance_metric == "L2":
+        distances = pairwise_distance(feature, squared=False)
+
+    elif distance_metric == "squared-L2":
+        distances = pairwise_distance(feature, squared=True)
+
+    elif distance_metric == "angular":
+        distances = angular_distance(feature)
+
+    else:
+        distances = distance_metric(feature)
+
+    return distances
 
 
 @tf.function

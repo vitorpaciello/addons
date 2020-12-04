@@ -120,23 +120,10 @@ def triplet_semihard_loss(
     labels = tf.reshape(labels, [lshape[0], 1])
 
     # Build pairwise squared distance matrix
-
-    if distance_metric == "L2":
-        pdist_matrix = metric_learning.pairwise_distance(
-            precise_embeddings, squared=False
+    pdist_matrix = metric_learning.calculate_distance_matrix(
+        precise_embeddings, distance_metric
         )
-
-    elif distance_metric == "squared-L2":
-        pdist_matrix = metric_learning.pairwise_distance(
-            precise_embeddings, squared=True
-        )
-
-    elif distance_metric == "angular":
-        pdist_matrix = metric_learning.angular_distance(precise_embeddings)
-
-    else:
-        pdist_matrix = distance_metric(precise_embeddings)
-
+    
     # Build pairwise binary adjacency matrix.
     adjacency = tf.math.equal(labels, tf.transpose(labels))
     # Invert so we can select negatives only.
@@ -257,21 +244,9 @@ def triplet_hard_loss(
     labels = tf.reshape(labels, [lshape[0], 1])
 
     # Build pairwise squared distance matrix.
-    if distance_metric == "L2":
-        pdist_matrix = metric_learning.pairwise_distance(
-            precise_embeddings, squared=False
+    pdist_matrix = metric_learning.calculate_distance_matrix(
+        precise_embeddings, distance_metric
         )
-
-    elif distance_metric == "squared-L2":
-        pdist_matrix = metric_learning.pairwise_distance(
-            precise_embeddings, squared=True
-        )
-
-    elif distance_metric == "angular":
-        pdist_matrix = metric_learning.angular_distance(precise_embeddings)
-
-    else:
-        pdist_matrix = distance_metric(precise_embeddings)
 
     # Build pairwise binary adjacency matrix.
     adjacency = tf.math.equal(labels, tf.transpose(labels))
